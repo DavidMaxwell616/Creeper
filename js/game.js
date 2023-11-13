@@ -13,7 +13,8 @@ var config = {
 var game = new Phaser.Game(config);
 function create() {
   background = this.add.image(400, 300, 'bkgd').setScale(2);
-
+  spaceBar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+  
   dude = this.add.sprite(592, 249, 'dude').setScale(2);
   this.anims.create({
     key: 'dudeChillin',
@@ -35,8 +36,6 @@ function create() {
       end: 14
     }),
     frameRate: 16,
-    repeat:-1,
-    yoyo: true
   })
   this.anims.create({
     key: 'dudeLookinAway',
@@ -72,9 +71,25 @@ function create() {
   girlHead.anims.play('girlChillin');
 }
 
-
+function DudeLooks()
+{
+  isLooking = true;
+  isLookingAway = false;
+  dude.anims.play('dudeLookin');
+}
+function DudeLooksAway()
+{
+  isLooking = false;
+  isLookingAway = true;
+  dude.anims.play('dudeLookinAway');
+}
 function update(){
- 
+  if (spaceBar.isDown && !isLooking) {
+    DudeLooks();
+  }
+  if (spaceBar.isUp) {
+    DudeLooksAway();
+  }
 }
 
 
