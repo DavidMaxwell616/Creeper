@@ -10,7 +10,7 @@ this.load.image('ogleslider', 'images/ogle slider.png');
 this.load.spritesheet('dude', 'spritesheets/dude.png', { frameWidth: 168, frameHeight: 238 });
 this.load.spritesheet('girl head', 'spritesheets/girl head.png', { frameWidth: 64, frameHeight:87 });
 this.load.spritesheet('girlTurns', 'spritesheets/girl turning.png', { frameWidth: 138, frameHeight:208 });
-this.load.spritesheet('canCrush', 'spritesheets/can crush.png', { frameWidth: 183, frameHeight:317 });
+this.load.spritesheet('canCrush', 'spritesheets/can crush.png', { frameWidth: 182, frameHeight:317 });
 
 this.load.audio('music', 'sounds/music.mp3');
 this.load.audio('hey', 'sounds/hey.mp3');

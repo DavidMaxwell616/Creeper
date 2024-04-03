@@ -35,7 +35,7 @@ function create() {
         start: 0,
         end: 12
       }),
-    frameRate: 16,
+    frameRate: 32,
     repeat: 0
   });
   canCrush.visible = false;
@@ -170,10 +170,11 @@ function ResetGame() {
   isLooking = false;
   canCrush.visible = false;
   meterValue.scaleX = 1;
-  girlSuspiciousTimer=0;
+  girlSuspiciousTimer = 0;
   girlTurn.visible = false;
   girlHead.visible = true;
   timesUpText.visible = false;
+  bustedText.visible = false;
 };
 
 function TimesUp() {
@@ -185,22 +186,14 @@ function TimesUp() {
   timesUpText.visible = true;
 };
 
-function Busted() {
-  canCrush.visible = true;
-  startGame = false;
-  gameOver = true;
-  slider.visible = false;
-  timesUp.play();
-  playAgainButton.visible = true;
-  bustedText.visible = true;
-  canCrush.anims.play('canCrushDude');
-  busted.play();
-};
 
 function girlChilling() {
   girlHead.setFrame(Math.round(girlHeadPosition));
   if (++girlHeadGazeTimer > girlGazeLength && girlGazing) {
-    girlHeadNextPosition = Phaser.Math.Between(1, 26);
+    if (isLooking)
+      girlHeadNextPosition = Phaser.Math.Between(20, 26);
+    else
+      girlHeadNextPosition = Phaser.Math.Between(1, 15);
     girlGazeLength = Phaser.Math.Between(50, 400);
     girlHeadGazeTimer = 0;
     girlGazing = false;
@@ -227,6 +220,26 @@ function dudeWon() {
   playAgainButton.visible = true;
 };
 
+function Busted() {
+  startGame = false;
+  gameOver = true;
+  girlHead.visible = false;
+  girlTurn.visible = true;
+  dude.anims.play('dudeBusted');
+  hey.play();
+  girlTurn.anims.play('girlTurning').once('animationcomplete', () => {
+    uhOh.play();
+    canCrush.visible = true;
+    startGame = false;
+    gameOver = true;
+    slider.visible = false;
+    playAgainButton.visible = true;
+    bustedText.visible = true;
+    canCrush.anims.play('canCrushDude');
+    busted.play();
+  });
+}
+
 function update() {
   if (!startGame)
     return;
@@ -239,29 +252,18 @@ function update() {
   if (timerValue == 0) {
     TimesUp();
   }
+  if (timerValue == 10) {
+    tenSeconds.play();
+  }
   var dudeFrame = Math.round((ogleSlider.x + ogleSlide.width / 2) / 17.8) + 7;
   dude.setFrame(dudeFrame);
   isLooking = dudeFrame < 12;
-  girlSuspicious = isLooking && girlHeadPosition > 10;
-  if (!girlSuspicious)
-    girlChilling();
-  else {
-    girlGazing = false;
-    girlScanning = false;
 
-    if (++girlSuspiciousTimer > 10) {
-      console.log(girlSuspicious);
-      gameOver = true;
-      girlHead.visible = false;
-      girlTurn.visible = true;
-      girlTurn.anims.play('girlTurning');
-      hey.play();
-      slider.visible = false;
-      dude.anims.play('dudeBusted');
-      uhOh.play();
-      dude.on('animationcomplete', Busted);
-    }
-  }
+  girlChilling();
+
+  if (isLooking && girlHeadPosition > 20)
+    Busted();
+
   if (isLooking && meterValue.scaleX < 198) {
     ogleValue += (12 - dudeFrame) / 100;
     meterValue.scaleX += (Math.round(ogleValue) / 100);
